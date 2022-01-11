@@ -7,7 +7,7 @@ const app = express();
 // Google Auth
 const { OAuth2Client } = require("google-auth-library");
 const CLIENT_ID =
-  "156298824903-9kbid3lhcmnvqe1p8o70ej617u335fg2.apps.googleusercontent.com";
+  process.env.CLIENT_ID;
 const client = new OAuth2Client(CLIENT_ID);
 
 const PORT = process.env.PORT;
