@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- acquire the library from Google -->
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <!-- essentially the login button created by google -->
+    <!-- Note: content is actually from our Client Id -->
+    <meta
+      name="google-signin-client_id"
+      content="156298824903-9kbid3lhcmnvqe1p8o70ej617u335fg2.apps.googleusercontent.com"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+  </head>
+  <body>
+    <h1>Login</h1>
+    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+    <!-- signout button by Google -->
+    <a href="#" onclick="signOut();">Sign out</a>
+    <script>
+      function onSignIn(googleUser) {
+        // after a successful sign in, you can get the user ID token
+        var id_token = googleUser.getAuthResponse().id_token;
+        console.log("id_token:", id_token);
+
+        // Then, send the ID token to your server with an HTTPS POST request:
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/login");
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onload = function () {
+          console.log("Signed in as: " + xhr.responseText);
+          if (xhr.responseText === "success") {
+            // signout so you won't remain signed in at teh front end, not our server
+            // You just want to use our actual google token to do the authentication 
+            signOut();
+            location.assign("/dashboard");
+          }
+        };
+
+        // send the id token which we received from Google to our /login route
+        xhr.send(JSON.stringify({ token: id_token }));
+
+        // var profile = googleUser.getBasicProfile();
+        // console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+        // console.log('Name: ' + profile.getName());
+        // console.log('Image URL: ' + profile.getImageUrl());
+        // console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+      }
+    </script>
+
+    <script>
+      // signout function provided by google
+      function signOut() {
+        var auth2 = gapi.auth2.getAuthInstance();
+        auth2.signOut().then(function () {
+          console.log("User signed out.");
+        });
+      }
+    </script>
+  </body>
+</html>
