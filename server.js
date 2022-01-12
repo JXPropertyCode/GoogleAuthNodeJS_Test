@@ -63,11 +63,13 @@ app.post("/login", (req, res) => {
     .catch(console.error);
 });
 
+// checkAuthenticated is the middleware to prevent unauthorized acacess.
 app.get("/dashboard", checkAuthenticated, (req, res) => {
   let user = req.user;
   res.render("dashboard", { user });
 });
 
+// checkAuthenticated is the middleware to prevent unauthorized acacess.
 app.get("/protectedroute", checkAuthenticated, (req, res) => {
   res.render("protectedroute");
 });
@@ -113,6 +115,7 @@ function checkAuthenticated(req, res, next) {
   // after the token is verified, we would then pass that token to be used in the browser to create a session
   verify()
     .then(() => {
+      // adding an object into req so that '/dashboard' can use that information
       req.user = user;
       next();
     })
